@@ -6,3 +6,11 @@ class TestSerializer(serializers.Serializer):
 
     a = serializers.IntegerField()
     b = serializers.IntegerField()
+
+
+class CarInstanceSerializer(serializers.Serializer):
+    kilometers = serializers.IntegerField()
+    car_id = serializers.IntegerField()
+    name = serializers.CharField(max_length=20)
+    month = serializers.IntegerField()
+    year = serializers.IntegerField()

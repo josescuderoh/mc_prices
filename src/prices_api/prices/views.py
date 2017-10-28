@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from . import serializers
-from . import tests
+from . import price_utils
 # Create your views here.
 
 
@@ -11,21 +11,21 @@ class UserPriceViewSet(viewsets.ViewSet):
     """API View for obtaining data about car and retriving price"""
 
     authentication_classes = (TokenAuthentication,)
-    serializer_class = serializers.TestSerializer
+    serializer_class = serializers.CarInstanceSerializer
 
     def list(self, request):
         """Message when get method is provided."""
 
-        return Response({'message': 'Include values a and b'})
+        return Response({'message': 'Include car instance data'})
 
     def create(self, request):
         """Calculate values using test"""
 
-        serializer = serializers.TestSerializer(data=request.data)
+        serializer = serializers.CarInstanceSerializer(data=request.data)
 
         if serializer.is_valid():
-            answer = tests.calculate_answer(serializer.data)
-            message = 'The result is {}'.format(answer)
+            answer = price_utils.get_car_name(serializer.data)
+            message = 'The car is a {} from make {}'.format(answer['model'], answer['make'])
 
             return Response({'message': message})
         else:
