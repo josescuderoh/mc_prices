@@ -14,7 +14,12 @@ Vagrant.configure("2") do |config|
   # boxes at https://atlas.hashicorp.com/search.
   config.vm.box = "ubuntu/xenial64"
 
-  config.vm.network "forwarded_port", host_ip: "127.0.0.1", guest: 8000, host: 8000
+  config.vm.provider "virtualbox" do |v|
+      v.memory = 4096
+      v.cpus = 4
+  end
+
+  config.vm.network "forwarded_port", host_ip: "127.0.0.1", guest: 5000, host: 5000
 
   config.vm.provision "shell", inline: <<-SHELL
     # Update and upgrade the server packages.
