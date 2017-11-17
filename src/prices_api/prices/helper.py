@@ -28,9 +28,6 @@ class Car():
         self.month = month
         self.state = int(state)
         self.survey = survey
-        self.exists = self.find_car()
-        if self.exists:
-            self.variation = self.check_price_variation()
         # Connect to database
         try:
             self.conn = psycopg2.connect("""dbname={} user={} host={} password={}""".format(
@@ -40,6 +37,11 @@ class Car():
                 os.environ.get('DB_PASSWORD')))
         except ConnectionError as e:
             print(e)
+        self.exists = self.find_car()
+        if self.exists:
+            self.variation = self.check_price_variation()
+
+        self.conn = "Connection"
 
     def find_car(self):
         """Check if car exists in the database"""
@@ -124,6 +126,8 @@ class Car():
                 return "year"
             else:
                 return "not_found"
+        # Close cursor
+        temp_cursor.close()
 
     def get_buy_price(self):
         """Returns a response for the current POST request"""
@@ -174,6 +178,8 @@ class Car():
                 self.market_price = np.mean([price[0] for price in car_output])
             elif current_car == "not_found":
                 self.exists = False
+            # Close cursor
+            temp_cursor.close()
 
     def get_max_price(self, buy_price):
         """

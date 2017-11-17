@@ -25,7 +25,7 @@ class UserPriceViewSet(viewsets.ViewSet):
 
         if serializer.is_valid():
             # Create car instance
-            car = helper.Car(serializer.data)
+            car = helper.Car(**serializer.data)
 
             return Response(car.__dict__)
         else:
