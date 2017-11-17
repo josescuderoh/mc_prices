@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from . import serializers
-from . import price_utils
+from . import helper
 # Create your views here.
 
 
@@ -19,14 +19,14 @@ class UserPriceViewSet(viewsets.ViewSet):
         return Response({'message': 'Include car instance data'})
 
     def create(self, request):
-        """Calculate values using test"""
+        """Calculate used car price"""
 
         serializer = serializers.CarInstanceSerializer(data=request.data)
 
         if serializer.is_valid():
-            answer = price_utils.get_car_name(serializer.data)
-            message = 'The car is a {} from make {}'.format(answer['model'], answer['make'])
+            # Create car instance
+            car = helper.Car(serializer.data)
 
-            return Response({'message': message})
+            return Response(car.__dict__)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

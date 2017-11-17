@@ -9,8 +9,9 @@ class TestSerializer(serializers.Serializer):
 
 
 class CarInstanceSerializer(serializers.Serializer):
-    kilometers = serializers.IntegerField()
     car_id = serializers.IntegerField()
-    name = serializers.CharField(max_length=20)
-    month = serializers.IntegerField()
+    kilometers = serializers.IntegerField()
+    model_year = serializers.IntegerField()
     year = serializers.IntegerField()
+    month = serializers.IntegerField()
+    state = serializers.IntegerField()

@@ -2,3 +2,4 @@ Django==1.11
 djangorestframework==3.6.2
 psycopg2==2.7.3.2
 pytz==2017.2
+numpy
