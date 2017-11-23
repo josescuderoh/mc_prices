@@ -21,11 +21,12 @@ with the following json object:
 url = 'http://ec2-54-86-137-40.compute-1.amazonaws.com/api/price/'
 
 {
-    "kilometers" : "", 
-    "car_id" : "",
+    "car_id" : "", - Required
+    "kilometers" : "", - Required
+    "year_model": "",  - Required
     "state" : "",
-    "month": "",
-    "year" : ""
+    "month": "",  - from RUNT
+    "year" : ""  - from RUNT
 }
 
 which will return the following object

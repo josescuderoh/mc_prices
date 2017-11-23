@@ -2,6 +2,7 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from . import serializers
 from . import helper
 # Create your views here.
@@ -12,6 +13,7 @@ class UserPriceViewSet(viewsets.ViewSet):
 
     authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.CarInstanceSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     def list(self, request):
         """Message when get method is provided."""
@@ -27,6 +29,6 @@ class UserPriceViewSet(viewsets.ViewSet):
             # Create car instance
             car = helper.Car(**serializer.data)
 
-            return Response(car.__dict__)
+            return Response(car.output)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

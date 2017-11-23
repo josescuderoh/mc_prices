@@ -2,8 +2,7 @@ import datetime
 import psycopg2
 import os
 import numpy as np
-
-CURRENT_YEAR = datetime.datetime.now().year
+from dateutil.relativedelta import relativedelta
 
 
 class Car():
@@ -16,7 +15,6 @@ class Car():
         year (float): The year model of the car.
         survey (dict): The survey of the Car. Default {}
         fasecolda (float): The fasecolda price for the car.
-        CURRENT_YEAR (int): The current year
     """
 
     # Car object
@@ -37,11 +35,19 @@ class Car():
                 os.environ.get('DB_PASSWORD')))
         except ConnectionError as e:
             print(e)
-        self.exists = self.find_car()
-        if self.exists:
-            self.variation = self.check_price_variation()
 
-        self.conn = "Connection"
+        try:
+            # Get market price
+            self.market_price = self.get_price_variation()
+            # Build response object
+            self.output = self.create_response()
+        except Exception:
+            self.output = {
+                "adjusted_max_price": None,
+                "adjusted_min_price": None,
+                "predicted_price": None,
+                "status": "ERROR"
+            }
 
     def find_car(self):
         """Check if car exists in the database"""
@@ -71,7 +77,7 @@ class Car():
             temp_cursor = self.conn.cursor()
             # Build query string
             sql_str = """
-            select models.name, makes.name from models
+            select models.name, makes.name, models.name from models
             join cars on cars.model_id = models.id
             join makes on makes.id = models.make_id
             where cars.id = {};
@@ -85,60 +91,38 @@ class Car():
             # Close cursor
             temp_cursor.close()
 
-    def check_price_variation(self):
-        """This method checks if the requested price_variation exists for a given month or year"""
+    def get_price_variation(self):
+        """This method checks if the requested price_variation exists for a given month and year"""
         # Create cursor
         temp_cursor = self.conn.cursor()
-        # Check if request contains month
-        if self.month:
-            # Build query
+        # Check if request contains month and year
+        if self.month and self.year:
+            # Build complete query if it does
             sql_str = """
-            select guides.reference
+            select price_variations.market_price,
+            price_variations.min_price_percentage,
+            price_variations.max_price_percentage,
+            price_variations.med_price_percentage,
+            price_variations.good_price_percentage
             from price_variations
             join guides on guides.id = price_variations.id_guide_pk
             join yearly_prices on price_variations.yearly_price_id = yearly_prices.id
             join cars on yearly_prices.car_id = cars.id
-            where cars.id = {} and yearly_prices.year_model = {} and guides.month_sold = {};
+            where cars.id = {} and yearly_prices.year_model = {} and guides.month_sold = {}
+            and guides.year_guide = {};
             """
             # Execute query
-            temp_cursor.execute(sql_str.format(self.car_id, self.year, self.month))
-            car_output = temp_cursor.fetchall()
-            # Return results
+            temp_cursor.execute(sql_str.format(self.car_id, self.model_year, self.month, self.year))
+            car_output = temp_cursor.fetchone()
+            # Check if month and year were found
             if car_output:
-                return "month"
-            else:
-                return "not_found"
-        else:
-            # Build query
-            sql_str = """
-            select guides.reference
-            from price_variations
-            join guides on guides.id = price_variations.id_guide_pk
-            join yearly_prices on price_variations.yearly_price_id = yearly_prices.id
-            join cars on yearly_prices.car_id = cars.id
-            where cars.id = {} and yearly_prices.year_model = {};
-            """
-            # Execute query
-            temp_cursor.execute(sql_str.format(self.car_id, self.year))
-            car_output = temp_cursor.fetchall()
-            # Return results
-            if car_output:
-                return "year"
-            else:
-                return "not_found"
-        # Close cursor
-        temp_cursor.close()
+                temp_cursor.close()
+                self.variation = "year_month"
+                return float(car_output[0])
 
-    def get_buy_price(self):
-        """Returns a response for the current POST request"""
-        if self.exists:
-            # Check price variation
-            current_car = self.variation
-            # If exact price variation exists
-            if current_car == "month":
-                # Create cursor
-                temp_cursor = self.conn.cursor()
-                # Build query string
+            # If exact price variation doesn't exist but year exists
+            else:
+                # Build partial query
                 sql_str = """
                 select price_variations.market_price,
                 price_variations.min_price_percentage,
@@ -149,58 +133,96 @@ class Car():
                 join guides on guides.id = price_variations.id_guide_pk
                 join yearly_prices on price_variations.yearly_price_id = yearly_prices.id
                 join cars on yearly_prices.car_id = cars.id
-                where cars.id = {} and yearly_prices.year_model = {} and guides.month_sold = {};
+                where cars.id = {} and yearly_prices.year_model = {} and guides.year_guide = {};
                 """
                 # Execute query
-                temp_cursor.execute(sql_str.format(self.car_id, self.model_year, self.month))
-                car_output = temp_cursor.fetchone()
-                self.market_price = car_output[0]
-            # If exact price variation doesn't exist
-            elif current_car == "year":
-                # Create cursor
-                temp_cursor = self.conn.cursor()
-                # Build query string
-                sql_str = """
-                select price_variations.market_price,
-                price_variations.min_price_percentage,
-                price_variations.max_price_percentage,
-                price_variations.med_price_percentage,
-                price_variations.good_price_percentage
-                from price_variations
-                join guides on guides.id = price_variations.id_guide_pk
-                join yearly_prices on price_variations.yearly_price_id = yearly_prices.id
-                join cars on yearly_prices.car_id = cars.id
-                where cars.id = {} and yearly_prices.year_model = {} and guides.month_sold = {};
-                """
-                # Execute query
-                temp_cursor.execute(sql_str.format(self.car_id, self.model_year, self.month))
+                temp_cursor.execute(sql_str.format(self.car_id, self.model_year, self.year))
                 car_output = temp_cursor.fetchall()
-                self.market_price = np.mean([price[0] for price in car_output])
-            elif current_car == "not_found":
-                self.exists = False
-            # Close cursor
-            temp_cursor.close()
+                if car_output:
+                    temp_cursor.close()
+                    self.variation = "year"
+                    return float(np.mean([price[0] for price in car_output]))
 
-    def get_max_price(self, buy_price):
+        # We get to this point if there are no variations for the year sent or if no year and
+        # mont information is sent to the API
+
+        # Build complete query
+        sql_str = """
+        select price_variations.market_price,
+        price_variations.min_price_percentage,
+        price_variations.max_price_percentage,
+        price_variations.med_price_percentage,
+        price_variations.good_price_percentage
+        from price_variations
+        join guides on guides.id = price_variations.id_guide_pk
+        join yearly_prices on price_variations.yearly_price_id = yearly_prices.id
+        join cars on yearly_prices.car_id = cars.id
+        where cars.id = {} and yearly_prices.year_model = {};
         """
-        Returns a max buy price for the car taking into account its current state
-        Args:
-            buy_price (float): The buy price of the car
-        Returns:
-            float: the max buy price of the car
-        """
+        # Execute query
+        temp_cursor.execute(sql_str.format(self.car_id, self.model_year))
+        car_output = temp_cursor.fetchall()
+        if car_output:
+            temp_cursor.close()
+            self.variation = "average"
+            return float(np.mean([price[0] for price in car_output]))
+        else:
+            return None
+
+    def get_max_price(self):
+        """Returns a max buy price for the car taking into account its current state"""
         delta = (0.01 * self.state) + 0.02
-        max_price = (1 + delta) * buy_price
+        max_price = (1 + delta) * self.market_price
         return max_price
 
-    def get_min_price(self, buy_price):
-        """
-        Returns a min buy price for the car taking into account its current state
-        Args:
-            buy_price (float): The buy price of the car
-        Returns:
-            float: the min buy price of the car
-        """
+    def get_min_price(self):
+        """Returns a min buy price for the car taking into account its current state"""
         delta = ((0.01) * self.state) + 0.08
-        min_price = (1 - delta) * buy_price
+        min_price = (1 - delta) * self.market_price
         return min_price
+
+    def create_response(self):
+        """This method creates the response object as form of dictionary to return to API"""
+
+        # If price variation was found but state does not meet requirements
+        if self.state == 1:
+            obj = {
+                "adjusted_max_price": None,
+                "adjusted_min_price": None,
+                "predicted_price": None,
+                "status": "NOT_VALID"
+            }
+        elif self.market_price:
+            obj = {
+                "adjusted_max_price": self.get_max_price(),
+                "adjusted_min_price": self.get_min_price(),
+                "predicted_price": self.market_price,
+                "status": self.valify()
+            }
+        else:
+            obj = {
+                "adjusted_max_price": None,
+                "adjusted_min_price": None,
+                "predicted_price": None,
+                "status": "NOT_FOUND"
+            }
+        return obj
+
+    def valify(self):
+        """This method checks validity of the car given MC standards"""
+        # Constants
+        monthly_mileage = 1600  # km
+        today = datetime.datetime.today()
+        # If month RUNT data is available
+        if self.month and self.year:
+            delta = relativedelta(today, datetime.datetime(self.year, self.month, 1))
+            max_mileage = monthly_mileage * (delta.years * 12 + delta.months)
+        # Otherwise
+        else:
+            delta = relativedelta(today, datetime.datetime(self.model_year, 1, 1))
+            max_mileage = monthly_mileage * (delta.years * 12 + delta.months)
+        # valify
+        if (max_mileage > self.kilometers) or (self.state == 2):
+            return "NOT_VALID"
+        else:
+            return "OK"

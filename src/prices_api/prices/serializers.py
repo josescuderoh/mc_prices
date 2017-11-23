@@ -9,9 +9,13 @@ class TestSerializer(serializers.Serializer):
 
 
 class CarInstanceSerializer(serializers.Serializer):
-    car_id = serializers.IntegerField()
-    kilometers = serializers.IntegerField()
-    model_year = serializers.IntegerField()
-    year = serializers.IntegerField()
-    month = serializers.IntegerField()
-    state = serializers.IntegerField()
+    car_id = serializers.IntegerField()  # Always required
+    kilometers = serializers.IntegerField()     # Always required
+    model_year = serializers.IntegerField()     # Always required
+    year = serializers.IntegerField(required=False)  # Only if RUNT register is sent
+    month = serializers.IntegerField(required=False)      # Only if RUNT register is sent
+    state = serializers.IntegerField(required=False)  # Always required
+
+    def get_validation_exclusions(self):
+        exclusions = super(CarInstanceSerializer, self).get_validation_exclusions()
+        return exclusions + ['month', 'year', 'status']
