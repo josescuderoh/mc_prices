@@ -10,6 +10,7 @@ locale-gen en_GB.UTF-8
 
 # Install Python, SQLite and pip
 apt-get update
+sudo apt-get upgrade
 apt-get install -y python3-dev python-pip supervisor nginx git
 
 # Upgrade pip to the latest version.
@@ -20,9 +21,10 @@ mkdir -p $PROJECT_BASE_PATH
 git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH/prices_api
 
 mkdir -p $VIRTUALENV_BASE_PATH
-virtualenv  $VIRTUALENV_BASE_PATH/prices_api
+virtualenv -p python3 $VIRTUALENV_BASE_PATH/prices_api
+chown -R ubuntu:ubuntu /usr/local/virtualenvs/prices_api
 
-source $VIRTUALENV_BASE_PATH/prices-api/bin/activate
+source $VIRTUALENV_BASE_PATH/prices_api/bin/activate
 pip install -r $PROJECT_BASE_PATH/prices_api/requirements.txt
 
 # Setup Supervisor to run our uwsgi process.
