@@ -1,5 +1,8 @@
 Django==1.11
 djangorestframework==3.6.2
 psycopg2==2.7.3.2
+python-dateutil==2.6.1
 pytz==2017.2
+six==1.11.0
 numpy
+uWSGI==2.0.15
