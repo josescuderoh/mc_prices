@@ -43,3 +43,9 @@ where the "status" field can take the following values:
 * NOT_VALID: car is not valid
 * NOT_FOUND: car was not found
 * ERROR: generic error
+
+
+Observations:
+
+* The information marked as (from RUNT) can be passed as argument, a result on the price could be more accurate.
+* It is not clear whether I deliver null results or a price with NOT_VALID status when mileage is above the maximum should ?
