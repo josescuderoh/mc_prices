@@ -222,7 +222,7 @@ class Car():
             delta = relativedelta(today, datetime.datetime(self.model_year, 1, 1))
             max_mileage = monthly_mileage * (delta.years * 12 + delta.months)
         # valify
-        if (max_mileage > self.kilometers) or (self.state == 2):
+        if (max_mileage < self.kilometers) or (self.state == 2):
             return "NOT_VALID"
         else:
             return "OK"
