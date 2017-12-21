@@ -59,9 +59,11 @@ POST request with information with a car without RUNT and default state:
 
 ```python
 #JSON object
-car_data = {"car_id" : 20630,
-             "kilometers" : 15000,
-             "model_year": 2017}
+{
+    "car_id" : 20630,
+    "kilometers" : 15000,
+    "model_year": 2017
+}
 
 #Response
 {
@@ -77,12 +79,14 @@ POST request with car information with RUNT and state:
 
 ```python
 #JSON object
-car_data = {"car_id" : 20630,
-             "kilometers" : 15000,
-             "model_year": 2017,
-             "state" : 4,
-             "month": 1,
-             "year": 2017}
+{
+    "car_id" : 20630,
+     "kilometers" : 15000,
+     "model_year": 2017,
+     "state" : 4,
+     "month": 1,
+     "year": 2017
+}
 
 #Response
 {

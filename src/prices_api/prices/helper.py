@@ -2,6 +2,7 @@ import datetime
 import psycopg2
 import os
 import numpy as np
+import math
 from dateutil.relativedelta import relativedelta
 
 
@@ -39,6 +40,8 @@ class Car():
         try:
             # Get market price
             self.market_price = self.get_price_variation()
+            # Get price price_today
+            self.price_today = self.mc_price()
             # Build response object
             self.output = self.create_response()
         except Exception:
@@ -172,13 +175,13 @@ class Car():
     def get_max_price(self):
         """Returns a max buy price for the car taking into account its current state"""
         delta = (0.01 * self.state) + 0.02
-        max_price = (1 + delta) * self.market_price
+        max_price = (1 + delta) * self.price_today
         return max_price
 
     def get_min_price(self):
         """Returns a min buy price for the car taking into account its current state"""
         delta = ((0.01) * self.state) + 0.08
-        min_price = (1 - delta) * self.market_price
+        min_price = (1 - delta) * self.price_today
         return min_price
 
     def create_response(self):
@@ -192,11 +195,11 @@ class Car():
                 "predicted_price": None,
                 "status": "NOT_VALID"
             }
-        elif self.market_price:
+        elif self.price_today:
             obj = {
-                "adjusted_max_price": self.get_max_price(),
-                "adjusted_min_price": self.get_min_price(),
-                "predicted_price": self.market_price,
+                "adjusted_max_price": round(self.get_max_price(), 3),
+                "adjusted_min_price": round(self.get_min_price(), 3),
+                "predicted_price": round(self.price_today, 3),
                 "status": self.valify()
             }
         else:
@@ -226,3 +229,18 @@ class Car():
             return "NOT_VALID"
         else:
             return "OK"
+
+    def mc_price(self):
+        """This method applies the model proposed by MatchCars"""
+        # Set of parameters
+
+        alpha = 0.01  # Curvature
+        beta = 120  # Lateral displacement
+        theta = 3.14  # Vertical displacement
+        omega = 0.21  # Distance between asintotes (greater than zero)
+
+        # Prediction for one car instance
+        price_today = self.market_price * \
+            (omega) * (theta - math.atan(alpha * (self.kilometers / 1000 - beta)))
+
+        return price_today
