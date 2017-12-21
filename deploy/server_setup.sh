@@ -21,8 +21,7 @@ mkdir -p $PROJECT_BASE_PATH
 git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH/prices_api
 
 mkdir -p $VIRTUALENV_BASE_PATH
-virtualenv -p python3 $VIRTUALENV_BASE_PATH/prices_api
-chown -R ubuntu:ubuntu /usr/local/virtualenvs/prices_api
+virtualenv $VIRTUALENV_BASE_PATH/prices_api
 
 source $VIRTUALENV_BASE_PATH/prices_api/bin/activate
 pip install -r $PROJECT_BASE_PATH/prices_api/requirements.txt
