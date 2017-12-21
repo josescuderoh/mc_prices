@@ -1,7 +1,6 @@
 # MatchCars Prices REST API
 
-REST API providing functionality for returning price information for the
-MatchCars platform.
+REST API providing functionality for returning price information for the MatchCars platform.
 
 In order to send a valid request, authentication should be provided by the REST API administrator. This feature is implemented for security purposes. The user should send a log in POST request to with the following json object:
 
@@ -40,7 +39,7 @@ which will return the following object:
 ```
 
 where the "status" field can take the following values:
-OK: car was found, is valid and has a price
-NOT_VALID: car is not valid
-NOT_FOUND: car was not found
-ERROR: generic error
+* OK: car was found, is valid and has a price
+* NOT_VALID: car is not valid
+* NOT_FOUND: car was not found
+* ERROR: generic error
