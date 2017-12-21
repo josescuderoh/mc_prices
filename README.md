@@ -22,20 +22,22 @@ url = 'http://ec2-54-86-137-40.compute-1.amazonaws.com/api/price/'
     "car_id" : "", - Required
     "kilometers" : "", - Required
     "year_model": "",  - Required
-    "state" : "",
-    "month": "",  - from RUNT
-    "year" : ""  - from RUNT
+    "state" : "", - Required
+    "month": "",  - from RUNT (if available)
+    "year" : ""  - from RUNT (if available)
 }
 ```
 
 which will return the following object:
 
+```
 {
   "adjusted_max_price" : "",
   "adjusted_min_price" : "",
   "predicted_price" : "",
   "status" : ""
 }
+```
 
 where the "status" field can take the following values:
 OK: car was found, is valid and has a price
