@@ -109,8 +109,8 @@ To uninstall run the following commands:
 
 ```
 sudo su - root
-systemctl stop nginx.service
 supervisorctl stop prices_api
+systemctl stop nginx.service
 rm -f -r /usr/local/apps/prices_api
 rm -f -r /usr/local/virtualenvs/prices_api
 rm -f -r /etc/supervisor/conf.d/prices_api.conf

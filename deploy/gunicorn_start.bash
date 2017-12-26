@@ -3,8 +3,7 @@
 NAME="prices_api"                                   # Name of the application
 DJANGODIR=/usr/local/apps/prices_api/src/prices_api               # Django project
 SOCKFILE=/usr/local/virtualenvs/prices_api/run/gunicorn.sock  # we will communicte using this unix socket
-USER=ubuntu                                         # the user to run as
-GROUP=ubuntu                                        # the group to run as
+USER=root                                         # the user to run as
 NUM_WORKERS=3                                       # how many worker processes should Gunicorn spawn
 DJANGO_SETTINGS_MODULE=prices_api.settings      # which settings file should Django use
 DJANGO_WSGI_MODULE=prices_api.wsgi              # WSGI module name
@@ -31,4 +30,4 @@ exec gunicorn ${DJANGO_WSGI_MODULE}:application \
   --user=$USER --group=$GROUP \
   --bind=unix:$SOCKFILE \
   --log-level=debug \
-  --log-file=-
+  --log-file= /var/log/gunicorn_prices_api.log

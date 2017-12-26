@@ -27,6 +27,9 @@ sudo chown -R ubuntu:ubuntu /usr/local/virtualenvs/prices_api
 source $VIRTUALENV_BASE_PATH/prices_api/bin/activate
 pip install -r $PROJECT_BASE_PATH/prices_api/requirements.txt
 
+cd $PROJECT_BASE_PATH/prices_api/deploy
+sudo chmod +x gunicorn_start.bash
+
 # Setup Supervisor to run our uwsgi process.
 sudo cp $PROJECT_BASE_PATH/prices_api/deploy/supervisor_prices_api.conf /etc/supervisor/conf.d/prices_api.conf
 sudo supervisorctl reread
