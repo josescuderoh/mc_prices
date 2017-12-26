@@ -102,7 +102,6 @@ POST request with car information with RUNT and state:
 Observations:
 
 * The information marked as (from RUNT) can be passed as argument, a result on the price could be more accurate.
-* It is not clear whether I should deliver null results or a price with NOT_VALID status when mileage is above the maximum or status is 1.
 
 ### Uninstalling the server
 

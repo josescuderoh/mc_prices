@@ -188,14 +188,7 @@ class Car():
         """This method creates the response object as form of dictionary to return to API"""
 
         # If price variation was found but state does not meet requirements
-        if self.state == 1:
-            obj = {
-                "adjusted_max_price": None,
-                "adjusted_min_price": None,
-                "predicted_price": None,
-                "status": "NOT_VALID"
-            }
-        elif self.price_today:
+        if self.price_today:
             obj = {
                 "adjusted_max_price": round(self.get_max_price(), 3),
                 "adjusted_min_price": round(self.get_min_price(), 3),
@@ -225,7 +218,7 @@ class Car():
             delta = relativedelta(today, datetime.datetime(self.model_year, 1, 1))
             max_mileage = monthly_mileage * (delta.years * 12 + delta.months)
         # valify
-        if (max_mileage < self.kilometers) or (self.state == 2):
+        if (max_mileage < self.kilometers) or (self.state in [1, 2]):
             return "NOT_VALID"
         else:
             return "OK"
