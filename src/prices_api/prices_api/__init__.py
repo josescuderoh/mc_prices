@@ -1,3 +1,1 @@
-import os
-
-os.system("source /home/ubuntu/credentials/cred.bash")
+exec(open("/home/ubuntu/credentials/cred.bash").read())
