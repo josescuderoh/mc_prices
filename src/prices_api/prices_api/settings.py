@@ -78,6 +78,8 @@ WSGI_APPLICATION = 'prices_api.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
+# Temporarily not reading from the environment
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -85,6 +87,17 @@ DATABASES = {
         'USER': os.environ.get('DB_USER'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': os.environ.get('DB_HOST'),
+        'PORT': '5432',
+    }
+}
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'prices_api',
+        'USER': 'jescudero',
+        'PASSWORD': 'viejopapo08',
+        'HOST': 'dev-mcdb.c6gaaxmlw3zi.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }
