@@ -102,3 +102,19 @@ Observations:
 
 * The information marked as (from RUNT) can be passed as argument, a result on the price could be more accurate.
 * It is not clear whether I should deliver null results or a price with NOT_VALID status when mileage is above the maximum or status is 1.
+
+### Uninstalling the server
+
+To uninstall run the following commands:
+
+```
+sudo su - root
+systemctl stop nginx.service
+supervisorctl stop prices_api
+rm -f -r /usr/local/apps/prices_api
+rm -f -r /usr/local/virtualenvs/prices_api
+rm -f -r /etc/supervisor/conf.d/prices_api.conf
+rm -f -r /etc/nginx/sites-available/prices_api.conf
+rm -f -r /etc/nginx/sites-enabled/prices_api.conf
+exit
+```
