@@ -34,7 +34,6 @@ supervisorctl restart prices_api
 
 # Setup nginx to make our application accessible.
 cp $PROJECT_BASE_PATH/prices_api/deploy/nginx_prices_api.conf /etc/nginx/sites-available/prices_api.conf
-rm /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/prices_api.conf /etc/nginx/sites-enabled/prices_api.conf
 systemctl restart nginx.service
 
