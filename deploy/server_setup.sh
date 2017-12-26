@@ -6,7 +6,7 @@ PROJECT_BASE_PATH='/usr/local/apps'
 VIRTUALENV_BASE_PATH='/usr/local/virtualenvs'
 
 # Set Ubuntu Language
-locale-gen en_GB.UTF-8
+sudo locale-gen en_GB.UTF-8
 
 # Install Python, SQLite and pip
 sudo apt-get update
@@ -16,7 +16,6 @@ sudo apt-get install -y python3-dev python-pip supervisor nginx git
 # Upgrade pip to the latest version.
 sudo pip install --upgrade pip
 sudo pip install virtualenv
-sudo pip install gunicorn
 
 sudo mkdir -p $PROJECT_BASE_PATH
 sudo git clone $PROJECT_GIT_URL $PROJECT_BASE_PATH/prices_api
