@@ -8,9 +8,8 @@ VIRTUALENV_BASE_PATH='/usr/local/virtualenvs'
 # Set Ubuntu Language
 sudo locale-gen en_GB.UTF-8
 
-# Install Python, SQLite and pip
+# Install Python,supervisor, nginx and pip
 sudo apt-get update
-sudo apt-get upgrade
 sudo apt-get install -y python3-dev python-pip supervisor nginx git
 
 # Upgrade pip to the latest version.

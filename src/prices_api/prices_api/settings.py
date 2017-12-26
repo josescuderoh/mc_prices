@@ -26,7 +26,7 @@ SECRET_KEY = '_gst*yy@w)osste=2(-5ozx3_(&3p06pb@lzmewc#l7361xn7w'
 DEBUG = True
 
 # ALLOWED_HOSTS = []
-ALLOWED_HOSTS = [u'ec2-54-86-137-40.compute-1.amazonaws.com', 'localhost', 'prices.matchcars.com']
+ALLOWED_HOSTS = [u'ec2-54-86-137-40.compute-1.amazonaws.com', 'prices.matchcars.com']
 
 
 # Application definition
@@ -87,17 +87,6 @@ DATABASES = {
         'USER': os.environ.get('DB_USER'),
         'PASSWORD': os.environ.get('DB_PASSWORD'),
         'HOST': os.environ.get('DB_HOST'),
-        'PORT': '5432',
-    }
-}
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'prices_api',
-        'USER': 'jescudero',
-        'PASSWORD': 'viejopapo08',
-        'HOST': 'dev-mcdb.c6gaaxmlw3zi.us-east-1.rds.amazonaws.com',
         'PORT': '5432',
     }
 }

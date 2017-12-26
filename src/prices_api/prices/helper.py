@@ -30,11 +30,9 @@ class Car():
         # Connect to database
         try:
             self.conn = psycopg2.connect("""dbname={} user={} host={} password={}""".format(
-                'mc_db',
-                # os.environ.get('MC_DB_NAME'),
+                os.environ.get('MC_DB_NAME'),
                 os.environ.get('DB_USER'),
                 os.environ.get('DB_HOST'),
-                # os.environ.get('DB_PASSWORD')))
                 os.environ.get('DB_PASSWORD')))
         except ConnectionError as e:
             print(e)
