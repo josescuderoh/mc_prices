@@ -31,10 +31,11 @@ cd $PROJECT_BASE_PATH/prices_api/deploy
 sudo chmod +x gunicorn_start.bash
 
 #Create log files
-sudo touch -p /var/log/prices_api/nginx-access.log
-sudo touch -p /var/log/prices_api/nginx-error.log
-sudo touch -p /var/log/prices_api/prices_api.log
-sudo touch -p /var/log/prices_api/prices_api_err.log
+sudo mkdir /var/log/prices_api
+sudo touch /var/log/prices_api/nginx-access.log
+sudo touch /var/log/prices_api/nginx-error.log
+sudo touch /var/log/prices_api/prices_api.log
+sudo touch /var/log/prices_api/prices_api_err.log
 
 # Setup Supervisor to run our uwsgi process.
 sudo cp $PROJECT_BASE_PATH/prices_api/deploy/supervisor_prices_api.conf /etc/supervisor/conf.d/prices_api.conf
